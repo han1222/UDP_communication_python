@@ -17,7 +17,7 @@ while True:
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
     #print(pickle.loads(data))
     udp_dict = pickle.loads(data)
-    print("udp_dict['vertical left stick axis'] :", udp_dict["vertical left stick axis"])
-    print("udp_dict['horizontal left stick axis'] :", udp_dict["horizontal left stick axis"])
+    print("longitudinal_cntrl_shock_level :", udp_dict["longitudinal_cntrl_shock_level"])
+    print("udp_dict['lateral_cntrl_shock_level'] :", udp_dict["lateral_cntrl_shock_level"])
 
 sock.close()
