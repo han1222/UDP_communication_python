@@ -6,7 +6,7 @@ import pickle
 # E-mail: robotics@kaist.ac.kr 
 
 
-UDP_IP = "Client IP Address" # write your Client IP Address
+UDP_IP = "127.0.0.1" # write your Client IP Address local is 127.0.0.1
 UDP_PORT = 5005 #port number
 
 sock = socket.socket(socket.AF_INET, # Internet

@@ -6,6 +6,7 @@ from std_msgs.msg import Bool
 
 import socket
 import pickle
+import struct
 
 
 # sudo apt-get install ros-kinetic-teleop-twist-joy 
@@ -22,34 +23,24 @@ import pickle
 # axis 0 aka left stick horizonal controls angular speed
 
 UDP_IP = "127.0.0.1" # write your Client IP Address local is 127.0.0.1
-UDP_PORT = 5005 #port number 
+UDP_PORT = 60001 #port number 
 sock = socket.socket(socket.AF_INET,  # Internet
                      socket.SOCK_DGRAM)  # UDP
 
-def callback(data):
+def VehCommandCallback(data):
     # print(type(sock))
-    twist = Twist()
-    # vertical left stick axis = linear rate
-    twist.linear.x = 1*data.axes[4]
-    # horizontal left stick axis = turn rate
-    twist.angular.z = -1*data.axes[0]
-    command = {"longitudinal_cntrl_shock_level": twist.linear.x,
-         "lateral_cntrl_shock_level": twist.angular.z
-         }
-
-    MESSAGE = pickle.dumps(command)
-    sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-    pub.publish(twist)
-
-    # print(twist.linear.x)
-    # print(twist.angular.z)
+    acceleration=data.drive.acceleration
+    steering_angle = data.drive.steering_angle
+    command=struct.pack('=Bddib', 255,steering_angle,acceleration,1,0)
+    upcommand= struct.unpack('=Bddib',command)
+    # MESSAGE = pickle.dumps(command)
+    sock.sendto(command, (UDP_IP, UDP_PORT))
+    print(upcommand)
 
 # Intializes everything
 def start():
-    rospy.init_node('Joy2WindowPC')
-    global pub
-    pub = rospy.Publisher('turtle1/cmd_vel', Twist, queue_size=1)
-    rospy.Subscriber("joy", Joy, callback)
+    rospy.init_node('UdoSendToCarmaker')
+    rospy.Subscriber("/Ackermann/command/joy", AckermannDriveStamped, VehCommandCallback)
     rospy.spin()
 
 
